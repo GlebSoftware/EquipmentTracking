@@ -1,14 +1,11 @@
-FROM ruby:2.6
-
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev
-
-RUN mkdir /redmine
+FROM ruby:2.6.0
 WORKDIR /redmine
-
 COPY Gemfile /redmine/Gemfile
 COPY Gemfile.lock /redmine/Gemfile.lock
+RUN gem update --system 3.2.3
+RUN gem install bundler:2.4.10
 RUN bundle install
+RUN gem install rails
+RUN bundle show
 COPY . /redmine
-
-EXPOSE 3000
-CMD ["rails", "server", "-b", "0.0.0.0"]
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
